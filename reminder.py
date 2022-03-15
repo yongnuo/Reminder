@@ -19,28 +19,30 @@ class Tray:
       button.pack(side = TOP, pady = 5)
       self.timer = None
       self.icon = None
-      self.win.protocol('WM_DELETE_WINDOW', lambda: self.quit(None, None))
+      self.win.protocol('WM_DELETE_WINDOW', self.minimize_to_tray)
 
    def start(self):
       self.win.mainloop()
 
-   def click_button(self):
-      messagebox.showinfo("Hello", "World")
-   
+   def minimize_to_tray(self):
+      self.win.withdraw()
+      self.icon = self.create_icon()
+      self.icon.run()
+
+   def restore_from_tray(self):
+      self.icon.stop()
+      self.win.after(0, self.win.deiconify)
 
    def restore_window(self, icon, item):
       print("Show window")
       self.cancel_timer_if_needed()
-      self.icon.stop()
-      self.win.after(0, self.win.deiconify)
+      self.restore_from_tray()
 
    def snooze(self):
       print("Hide window")
       self.timer = threading.Timer(15, lambda: self.restore_window(None, None))
       self.timer.start()
-      self.win.withdraw()
-      self.icon = self.create_icon()
-      self.icon.run()
+      self.minimize_to_tray()
 
    def create_icon(self):
       image=Image.open(self.icon_photo)
@@ -57,8 +59,7 @@ class Tray:
 
    def quit(self, icon, item):
       self.cancel_timer_if_needed()
-      if(self.icon):
-         self.icon.stop()
+      self.icon.stop()
       self.win.destroy()
 
 tray = Tray()
