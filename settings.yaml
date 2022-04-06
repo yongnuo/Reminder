@@ -1,0 +1,5 @@
+title: Exercise reminder
+default_timeout_in_minutes: 75
+min_timeout_in_minutes: 30
+max_timeout_in_minutes: 90
+window_background_color: "#FF0000"
