@@ -1,5 +1,10 @@
-title: Exercise reminder
-default_timeout_in_minutes: 80
-# min_timeout_in_minutes: 30
-# max_timeout_in_minutes: 90
-# window_background_color: "#FF0000"
+default_timeout_in_minutes: 90
+icon_image: alarm_icon.png
+max_timeout_in_minutes: 120
+min_timeout_in_minutes: 20
+pre_title: Time to
+startup_timeout_in_minutes: 90
+title: Exercise
+title_color: '#FFFFFF'
+window_background_color: '#004080'
+window_title: Exercise reminder
