@@ -1,5 +1,5 @@
 default_timeout_in_minutes: 90
-icon_image: alarm_icon.png
+icon_image: C:\OwnProjects\Reminder\production\alarm_icon.png
 max_timeout_in_minutes: 120
 min_timeout_in_minutes: 20
 pre_title: Time to

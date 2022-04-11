@@ -14,54 +14,59 @@ from PIL import Image, ImageTk
 
 class Reminder:
    def __init__(self, argv):
-      settings_file_name = self.parse_command_line_options(argv)
-      self.settings = self.safe_get_settings(settings_file_name)
+      try:
+         settings_file_name = self.parse_command_line_options(argv)
+         self.settings = self.safe_get_settings(settings_file_name)
+         
+         self.win=Tk()
+         self.win.iconphoto(False, PhotoImage(file=self.settings["icon_image"]))
+         self.win.title(self.settings["window_title"])
+         self.win["background"] = self.settings["window_background_color"]
+         self.exercise_timeout = IntVar()
+         self.exercise_timeout.set(self.settings["default_timeout_in_minutes"])
+
+         button_font = tkFont.Font(family="Arial", size=10)
+         pre_title_font = tkFont.Font(family="Arial", size=16, weight="bold", slant="italic")
+         title_font = tkFont.Font(family="Arial", size=40, weight="bold", slant="italic")
+         slider_label_font = tkFont.Font(family="Arial", size=8)
+
+         pre_title_label = Label(self.win, text=self.settings["pre_title"], bg=self.settings["window_background_color"], foreground=self.settings["title_color"], font=pre_title_font)
+         pre_title_label.pack(fill=X, expand=False)
+         title_label = Label(self.win, text=self.settings["title"], bg=self.settings["window_background_color"], foreground=self.settings["title_color"], font=title_font)
+         title_label.pack(fill=X, expand=False)
+
+         select_time_frame = Frame(self.win, relief=RAISED, borderwidth=2)
+         select_time_frame.pack(fill=BOTH, padx=5)
+         slider_label_frame = Frame(select_time_frame)
+         slider_label_frame.pack(side=RIGHT, fill=Y)
+         self.slider_label = Label(slider_label_frame, text=self.exercise_timeout.get(), font=slider_label_font, width=3)
+         self.slider_label.pack(side=BOTTOM, ipady=2)
+         slider = Scale(select_time_frame, orient=HORIZONTAL, resolution=5, from_=self.settings["min_timeout_in_minutes"], to=self.settings["max_timeout_in_minutes"], variable=self.exercise_timeout, command=self.set_slider_value, label="Number of minutes", showvalue=0)
+         slider.pack(side=LEFT, fill=X, expand=TRUE)
+
+         until_next_time_button = Button(self.win, text='Until next time', command = lambda: self.start_timer_and_hide(self.exercise_timeout.get() * 60), font=button_font)
+         until_next_time_button.pack(fill=BOTH, padx=5, pady=5)
+
+         bottom_frame = Frame(self.win, relief=RAISED, borderwidth=1)
+         bottom_frame.pack(side=BOTTOM, fill=X)
+         snooze_15_button = Button(bottom_frame, text = 'Snooze 15', command = lambda: self.start_timer_and_hide(15 * 60), font=button_font)
+         snooze_15_button.pack(side=RIGHT, pady = 5, padx= 5, ipadx=5)
+         snooze_10_button = Button(bottom_frame, text = 'Snooze 10', command = lambda: self.start_timer_and_hide(10 * 60), font=button_font)
+         snooze_10_button.pack(side=RIGHT, ipadx=5)
+         snooze_5_button = Button(bottom_frame, text = 'Snooze 5', command = lambda: self.start_timer_and_hide(5 * 60), font=button_font)
+         snooze_5_button.pack(side=RIGHT, ipadx=5, padx=5)
+         
+         
+         self.timer = None
+         self.icon = None
+         self.win.protocol('WM_DELETE_WINDOW', lambda: self.start_timer_and_hide(self.exercise_timeout.get() * 60))
+         if(self.settings["startup_timeout_in_minutes"] > 0):
+            self.start_timer_and_hide(self.settings["startup_timeout_in_minutes"] * 60)
+
+      except Exception as e:
+         messagebox.showinfo("Error", e)
+
       
-      self.win=Tk()
-      self.win.iconphoto(False, PhotoImage(file=self.settings["icon_image"]))
-      self.win.title(self.settings["window_title"])
-      self.win["background"] = self.settings["window_background_color"]
-      self.exercise_timeout = IntVar()
-      self.exercise_timeout.set(self.settings["default_timeout_in_minutes"])
-
-      button_font = tkFont.Font(family="Arial", size=10)
-      pre_title_font = tkFont.Font(family="Arial", size=16, weight="bold", slant="italic")
-      title_font = tkFont.Font(family="Arial", size=40, weight="bold", slant="italic")
-      slider_label_font = tkFont.Font(family="Arial", size=8)
-
-      pre_title_label = Label(self.win, text=self.settings["pre_title"], bg=self.settings["window_background_color"], foreground=self.settings["title_color"], font=pre_title_font)
-      pre_title_label.pack(fill=X, expand=False)
-      title_label = Label(self.win, text=self.settings["title"], bg=self.settings["window_background_color"], foreground=self.settings["title_color"], font=title_font)
-      title_label.pack(fill=X, expand=False)
-
-      select_time_frame = Frame(self.win, relief=RAISED, borderwidth=2)
-      select_time_frame.pack(fill=BOTH, padx=5)
-      slider_label_frame = Frame(select_time_frame)
-      slider_label_frame.pack(side=RIGHT, fill=Y)
-      self.slider_label = Label(slider_label_frame, text=self.exercise_timeout.get(), font=slider_label_font, width=3)
-      self.slider_label.pack(side=BOTTOM, ipady=2)
-      slider = Scale(select_time_frame, orient=HORIZONTAL, resolution=5, from_=self.settings["min_timeout_in_minutes"], to=self.settings["max_timeout_in_minutes"], variable=self.exercise_timeout, command=self.set_slider_value, label="Number of minutes", showvalue=0)
-      slider.pack(side=LEFT, fill=X, expand=TRUE)
-
-      until_next_time_button = Button(self.win, text='Until next time', command = lambda: self.start_timer_and_hide(self.exercise_timeout.get() * 60), font=button_font)
-      until_next_time_button.pack(fill=BOTH, padx=5, pady=5)
-
-      bottom_frame = Frame(self.win, relief=RAISED, borderwidth=1)
-      bottom_frame.pack(side=BOTTOM, fill=X)
-      snooze_15_button = Button(bottom_frame, text = 'Snooze 15', command = lambda: self.start_timer_and_hide(15 * 60), font=button_font)
-      snooze_15_button.pack(side=RIGHT, pady = 5, padx= 5, ipadx=5)
-      snooze_10_button = Button(bottom_frame, text = 'Snooze 10', command = lambda: self.start_timer_and_hide(10 * 60), font=button_font)
-      snooze_10_button.pack(side=RIGHT, ipadx=5)
-      snooze_5_button = Button(bottom_frame, text = 'Snooze 5', command = lambda: self.start_timer_and_hide(5 * 60), font=button_font)
-      snooze_5_button.pack(side=RIGHT, ipadx=5, padx=5)
-      
-      
-      self.timer = None
-      self.icon = None
-      # if(self.settings["startup_timeout_in_minutes"] > 0):
-      #    self.start_timer_and_hide(self.settings["startup_timeout_in_minutes"] * 60)
-
-      # self.win.protocol('WM_DELETE_WINDOW', self.minimize_to_tray)
 
    def get_default_settings(self):
       settings = {

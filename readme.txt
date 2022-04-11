@@ -34,5 +34,5 @@ exit (stänger av command prompt)
 press Windows+R, then type shell:startup.
 
 Skapa genväg med följande text
-"C:\Program Files\PowerShell\7\pwsh.exe" -command "& C:\OwnProjects\Reminder\reminder\Scripts\pythonw.exe C:\OwnProjects\Reminder\reminder.py"
+"C:\Program Files\PowerShell\7\pwsh.exe" -command "& C:\OwnProjects\Reminder\reminder\Scripts\pythonw.exe C:\OwnProjects\Reminder\production\reminder.py -s C:\OwnProjects\Reminder\production\exercise_settings.yaml"
 

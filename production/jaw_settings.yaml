@@ -1,0 +1,10 @@
+default_timeout_in_minutes: 120
+icon_image: C:\OwnProjects\Reminder\production\shark.png
+max_timeout_in_minutes: 240
+min_timeout_in_minutes: 60
+pre_title: Move your
+startup_timeout_in_minutes: 45
+title: Jaw
+title_color: '#FFFFFF'
+window_background_color: '#E6E600'
+window_title: Exercise reminder
