@@ -1,6 +1,6 @@
 # Reminder
 
-### Simple reminder application which sleeps in the taskbar. Pops up at set intervals with snooze functionality. Customizable colors, texts and icon. Written in python / tkinter.
+Simple reminder application which sleeps in the taskbar. Pops up at set intervals with snooze functionality. Customizable colors, texts and icon. Written in python / tkinter.
 
 ![Fetch Remote Settings](documentation/application.png)
 
