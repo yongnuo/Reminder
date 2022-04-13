@@ -1,16 +1,12 @@
-# Import the required libraries
-# from tkinter import messagebox, Button, TOP, Tk, PhotoImage, Frame, RAISED, BOTH, LEFT, RIGHT, BOTTOM, X, Y
-from tkinter import *
+from tkinter import messagebox, Button, Tk, PhotoImage, Frame, Label, Scale, RAISED, BOTH, LEFT, RIGHT, BOTTOM, HORIZONTAL, X, Y, IntVar, TRUE
 from sys import exit, argv
 from getopt import getopt, GetoptError
-from tkinter import messagebox
 import tkinter.font as tkFont
 import threading
-import tkinter
-import yaml
-import os
+from yaml import safe_dump, YAMLError, safe_load
+from os.path import abspath
 from pystray import MenuItem as item, Icon
-from PIL import Image, ImageTk
+from PIL import Image
 
 class Reminder:
    def __init__(self, argv):
@@ -84,12 +80,12 @@ class Reminder:
       return settings
 
    def safe_get_settings(self, settings_file_name):
-      full_settings_file_name = os.path.abspath(settings_file_name)
-      print(full_settings_file_name)
+      full_settings_file_name = abspath(settings_file_name)
+      print("Loading settings from {0}".format(full_settings_file_name))
       with open(full_settings_file_name, 'r') as stream:
          try:
-            settings=yaml.safe_load(stream)
-         except yaml.YAMLError as exc:
+            settings=safe_load(stream)
+         except YAMLError as exc:
             print(exc)
       default_settings = self.get_default_settings()
       if "window_title" not in settings:
@@ -111,9 +107,9 @@ class Reminder:
       if "title_color" not in settings:
          settings["title_color"] = default_settings["title_color"]
       if "icon_image" in settings:
-         settings["icon_image"] = os.path.abspath(settings["icon_image"])
+         settings["icon_image"] = abspath(settings["icon_image"])
       else:
-         settings["icon_image"] = os.path.abspath(default_settings["icon_image"])
+         settings["icon_image"] = abspath(default_settings["icon_image"])
       return settings
 
 
@@ -139,7 +135,7 @@ class Reminder:
       self.restore_from_tray()
 
    def start_timer_and_hide(self, timeout_in_seconds):
-      print("Hide window")
+      print("Hide window and sleep for {0} seconds".format(timeout_in_seconds))
       self.timer = threading.Timer(timeout_in_seconds, lambda: self.restore_window(None, None))
       self.timer.start()
       self.minimize_to_tray()
@@ -155,7 +151,7 @@ class Reminder:
          self.timer.cancel()
          self.timer = None
       else:
-         print("timer does not exist")
+         print("Timer does not exist")
 
    def quit(self, icon, item):
       self.cancel_timer_if_needed()
@@ -174,18 +170,17 @@ class Reminder:
          if opt == '-h':
             print(help_caption)
             default_settings = self.get_default_settings()
-            default_settings_file_name = os.path.abspath("default_settings.yaml")
+            default_settings_file_name = abspath("default_settings.yaml")
             with open(default_settings_file_name, 'w') as stream:
                try:
-                  yaml.safe_dump(default_settings, stream)
-               except yaml.YAMLError as exc:
+                  safe_dump(default_settings, stream)
+               except YAMLError as exc:
                   print(exc)
             exit(0)
          elif opt in ("-s", "--settings"):
             settings_file = arg
       if settings_file == None:
          settings_file = "settings.yaml"
-      print("Settings file is \"{0}\"".format(settings_file))
       return settings_file
 
 
