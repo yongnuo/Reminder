@@ -4,9 +4,11 @@ from getopt import getopt, GetoptError
 import tkinter.font as tkFont
 import threading
 from yaml import safe_dump, YAMLError, safe_load
-from os.path import abspath
+from os.path import abspath, join
+from os import linesep
 from pystray import MenuItem as item, Icon
 from PIL import Image
+from pathlib import Path
 
 class Reminder:
    def __init__(self, argv):
@@ -60,6 +62,15 @@ class Reminder:
             self.start_timer_and_hide(self.settings["startup_timeout_in_minutes"] * 60)
 
       except Exception as e:
+         script_path = Path(__file__).parent.resolve()
+         error_filename = join(script_path, "error.log")
+         with open(error_filename, 'a') as stream:
+            try:
+               stream.write(str(e))
+               stream.write(linesep)
+            except Exception as exc:
+               print(exc)
+
          messagebox.showinfo("Error", e)
 
       
