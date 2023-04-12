@@ -25,8 +25,8 @@ cd <FOLDER>
 # Create venv
 py -m venv reminder_venv
 
-# Activate venv
-.\reminder_venv\Scripts\activate.bat 
+# Activate venv (do NOT use activate.bat in Powershell)
+.\reminder_venv\Scripts\activate 
 # Prompt shifts to (venv) C:\....
 
 # Install packages from requirements.txt
