@@ -20,6 +20,7 @@ class Reminder:
          self.win.iconphoto(False, PhotoImage(file=self.settings["icon_image"]))
          self.win.title(self.settings["window_title"])
          self.win["background"] = self.settings["window_background_color"]
+         self.win.attributes('-topmost',self.settings["always_on_top"])
          self.exercise_timeout = IntVar()
          self.exercise_timeout.set(self.settings["default_timeout_in_minutes"])
 
@@ -73,8 +74,6 @@ class Reminder:
 
          messagebox.showinfo("Error", e)
 
-      
-
    def get_default_settings(self):
       settings = {
          "window_title": "Exercise reminder",
@@ -84,6 +83,7 @@ class Reminder:
          "default_timeout_in_minutes": 90,
          "min_timeout_in_minutes": 20,
          "max_timeout_in_minutes": 120,
+         "always_on_top": True,
          "window_background_color": "#004080",
          "title_color": "#FFFFFF",
          "icon_image": "alarm_icon.png"
@@ -113,6 +113,8 @@ class Reminder:
          settings["min_timeout_in_minutes"] = default_settings["min_timeout_in_minutes"]
       if "max_timeout_in_minutes" not in settings:
          settings["max_timeout_in_minutes"] = default_settings["max_timeout_in_minutes"]
+      if "always_on_top" not in settings:
+         settings["always_on_top"] = default_settings["always_on_top"]
       if "window_background_color" not in settings:
          settings["window_background_color"] = default_settings["window_background_color"]
       if "title_color" not in settings:
