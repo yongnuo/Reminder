@@ -38,9 +38,6 @@ py reminder.py -h
 
 # Run reminder.py with custom settings
 py reminder.py -s <SETTINGS_FILE_NAME>
-
-# Run reminder.py with default settings
-py reminder.py
 ```
 
 ### 5. Start at boot / Create shortcut in Windows Startup Folder
